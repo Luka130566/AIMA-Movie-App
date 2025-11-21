@@ -1,0 +1,4 @@
+composer create-project laravel/laravel backend-laravel
+cd backend-laravel
+composer require laravel/sanctum
+php artisan install:api
