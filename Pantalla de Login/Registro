@@ -1,0 +1,98 @@
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../services/api_service.dart';
+import 'catalog_screen.dart';
+
+class AuthScreen extends StatefulWidget {
+  final bool isLogin;
+  const AuthScreen({super.key, required this.isLogin});
+
+  @override
+  State<AuthScreen> createState() => _AuthScreenState();
+}
+
+class _AuthScreenState extends State<AuthScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+
+    final success = widget.isLogin
+        ? await ApiService.login(_emailController.text, _passwordController.text)
+        : await ApiService.register(
+            _nameController.text,
+            _emailController.text,
+            _passwordController.text,
+          );
+
+    setState(() => _isLoading = false);
+
+    if (success && mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const CatalogScreen()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error en la autenticación')),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.isLogin ? 'Ingresar' : 'Registrarse')),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              if (!widget.isLogin)
+                TextFormField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(labelText: 'Nombre'),
+                  validator: (value) => value!.isEmpty ? 'Campo requerido' : null,
+                ),
+              TextFormField(
+                controller: _emailController,
+                decoration: const InputDecoration(labelText: 'Email'),
+                keyboardType: TextInputType.emailAddress,
+                validator: (value) => value!.isEmpty ? 'Campo requerido' : null,
+              ),
+              TextFormField(
+                controller: _passwordController,
+                decoration: const InputDecoration(labelText: 'Contraseña'),
+                obscureText: true,
+                validator: (value) => value!.length < 6 ? 'Mínimo 6 caracteres' : null,
+              ),
+              const SizedBox(height: 30),
+              _isLoading
+                  ? const CircularProgressIndicator()
+                  : ElevatedButton(
+                      onPressed: _submit,
+                      child: Text(widget.isLogin ? 'Ingresar' : 'Registrarse'),
+                    ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
