@@ -1,0 +1,87 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import '../models/movie.dart';
+
+class ApiService {
+  static const String baseUrl = 'http://10.0.2.2:8000/api';
+  
+  static Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token');
+  }
+
+  static Future<bool> register(String name, String email, String password) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/register'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'name': name, 'email': email, 'password': password}),
+    );
+    if (response.statusCode == 201) {
+      final token = json.decode(response.body)['token'];
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', token);
+      return true;
+    }
+    return false;
+  }
+
+  static Future<bool> login(String email, String password) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/login'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'email': email, 'password': password}),
+    );
+    if (response.statusCode == 200) {
+      final token = json.decode(response.body)['token'];
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', token);
+      return true;
+    }
+    return false;
+  }
+
+  static Future<List<Movie>> getMovies() async {
+    final token = await getToken();
+    final response = await http.get(
+      Uri.parse('$baseUrl/movies'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      return data.map((json) => Movie.fromJson(json)).toList();
+    }
+    return [];
+  }
+
+  static Future<Movie?> getMovie(int id) async {
+    final token = await getToken();
+    final response = await http.get(
+      Uri.parse('$baseUrl/movies/$id'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+    if (response.statusCode == 200) {
+      return Movie.fromJson(json.decode(response.body));
+    }
+    return null;
+  }
+
+  static Future<void> addMovie(Movie movie) async {
+    final token = await getToken();
+    await http.post(
+      Uri.parse('$baseUrl/movies'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+      body: json.encode({
+        'title': movie.title,
+        'year': movie.year,
+        'director': movie.director,
+        'genre': movie.genre,
+        'synopsis': movie.synopsis,
+        'image_url': movie.imageUrl,
+      }),
+    );
+  }
+}
