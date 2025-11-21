@@ -1,0 +1,80 @@
+<?php
+namespace Database\Seeders;
+
+use App\Models\Movie;
+use Illuminate\Database\Seeder;
+
+class MovieSeeder extends Seeder {
+    public function run(): void {
+        $movies = [
+            [
+                'title' => 'Oppenheimer',
+                'year' => 2023,
+                'director' => 'Christopher Nolan',
+                'genre' => 'Drama/Histórico',
+                'synopsis' => 'La historia del físico J. Robert Oppenheimer y su papel en el desarrollo de la bomba atómica.',
+                'image_url' => 'https://m.media-amazon.com/images/M/MV5BMDBmYTZjNjUtN2M1MS00MTQ2LTk2ODgtNzc2M2QyZGE5NTVjXkEyXkFqcGdeQXVyNzAwMjU2MTY@._V1_.jpg'
+            ],
+            [
+                'title' => 'Barbie',
+                'year' => 2023,
+                'director' => 'Greta Gerwig',
+                'genre' => 'Comedia/Fantasía',
+                'synopsis' => 'Una muñeca Barbie vive en Barbieland, pero su vida perfecta da un giro cuando comienza a tener pensamientos mortales.',
+                'image_url' => 'https://m.media-amazon.com/images/M/MV5BZjRiNTJlZTAtYTA2Yi00OWM5LTlmMzQtNWM4ZTEyMmU2YjkyXkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_.jpg'
+            ],
+            [
+                'title' => 'Spider-Man: Across the Spider-Verse',
+                'year' => 2023,
+                'director' => 'Joaquim Dos Santos',
+                'genre' => 'Animación/Acción',
+                'synopsis' => 'Miles Morales regresa para una aventura épica que une múltiples universos Spider-Man.',
+                'image_url' => 'https://m.media-amazon.com/images/M/MV5BMzI5NmY1OTQtZDRkMi00Yzk3LTg1MDgtODZiYWVhNjNmMjI0XkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_.jpg'
+            ],
+            [
+                'title' => 'The Super Mario Bros. Movie',
+                'year' => 2023,
+                'director' => 'Aaron Horvath',
+                'genre' => 'Animación/Aventura',
+                'synopsis' => 'Mario y Luigi comienzan una aventura para rescatar a la Princesa Peach del malvado Bowser.',
+                'image_url' => 'https://m.media-amazon.com/images/M/MV5BOTJhNzlmNzctNTU5Yy00N2YwLThhMjQtZDM0YjEzN2Y0OWE4XkEyXkFqcGdeQXVyMTEzMTI1Mjk3._V1_.jpg'
+            ],
+            [
+                'title' => 'Guardians of the Galaxy Vol. 3',
+                'year' => 2023,
+                'director' => 'James Gunn',
+                'genre' => 'Acción/Comedia',
+                'synopsis' => 'Los Guardianes deben proteger a la galaxia y a uno de los suyos en su última misión juntos.',
+                'image_url' => 'https://m.media-amazon.com/images/M/MV5BMDgxOTk1NTQtYjgzMy00M2E4LWIzM2ItNWM0YjMyZTE2YTNkXkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_.jpg'
+            ],
+            [
+                'title' => 'Elemental',
+                'year' => 2023,
+                'director' => 'Peter Sohn',
+                'genre' => 'Animación/Romance',
+                'synopsis' => 'En una ciudad donde los residentes son elementos de fuego, agua, aire y tierra, una chica de fuego se enamora de un chico de agua.',
+                'image_url' => 'https://lumiere-a.akamaihd.net/v1/images/elemental_1080_c0bd6951.jpeg'
+            ],
+            [
+                'title' => 'Fast X',
+                'year' => 2023,
+                'director' => 'Louis Leterrier',
+                'genre' => 'Acción/Aventura',
+                'synopsis' => 'Dom Toretto y su familia se enfrentan a su enemigo más letal surgido del pasado.',
+                'image_url' => 'https://m.media-amazon.com/images/M/MV5BNzZmMjI5M2EtZjNkZi00ZGMxLWE0YzUtMTY5MDI4NGI0NGY2XkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_.jpg'
+            ],
+            [
+                'title' => 'The Little Mermaid',
+                'year' => 2023,
+                'director' => 'Rob Marshall',
+                'genre' => 'Fantasía/Musical',
+                'synopsis' => 'Una joven sirena hace un trato con una bruja del mar para convertirse en humana y ganarse el amor de un príncipe.',
+                'image_url' => 'https://m.media-amazon.com/images/M/MV5BZDY0Y2E3YzgtMDJjOS00OTkzLWE1YmYtY2RhMjZjZjI3NTQ0XkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_.jpg'
+            ]
+        ];
+
+        foreach ($movies as $movie) {
+            Movie::create($movie);
+        }
+    }
+}
