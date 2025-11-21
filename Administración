@@ -1,0 +1,93 @@
+import 'package:flutter/material.dart';
+import '../models/movie.dart';
+import '../services/api_service.dart';
+
+class AdminScreen extends StatefulWidget {
+  const AdminScreen({super.key});
+
+  @override
+  State<AdminScreen> createState() => _AdminScreenState();
+}
+
+class _AdminScreenState extends State<AdminScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final Map<String, dynamic> _formData = {};
+
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    _formKey.currentState!.save();
+
+    final movie = Movie(
+      id: 0,
+      title: _formData['title'],
+      year: int.parse(_formData['year']),
+      director: _formData['director'],
+      genre: _formData['genre'],
+      synopsis: _formData['synopsis'],
+      imageUrl: _formData['image_url'],
+    );
+
+    await ApiService.addMovie(movie);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Película agregada')),
+      );
+      Navigator.pop(context);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Agregar Película')),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              TextFormField(
+                decoration: const InputDecoration(labelText: 'Título'),
+                onSaved: (value) => _formData['title'] = value,
+                validator: (value) => value!.isEmpty ? 'Requerido' : null,
+              ),
+              TextFormField(
+                decoration: const InputDecoration(labelText: 'Año'),
+                keyboardType: TextInputType.number,
+                onSaved: (value) => _formData['year'] = value,
+                validator: (value) => value!.isEmpty ? 'Requerido' : null,
+              ),
+              TextFormField(
+                decoration: const InputDecoration(labelText: 'Director'),
+                onSaved: (value) => _formData['director'] = value,
+                validator: (value) => value!.isEmpty ? 'Requerido' : null,
+              ),
+              TextFormField(
+                decoration: const InputDecoration(labelText: 'Género'),
+                onSaved: (value) => _formData['genre'] = value,
+                validator: (value) => value!.isEmpty ? 'Requerido' : null,
+              ),
+              TextFormField(
+                decoration: const InputDecoration(labelText: 'URL de Imagen'),
+                onSaved: (value) => _formData['image_url'] = value,
+                validator: (value) => value!.isEmpty ? 'Requerido' : null,
+              ),
+              TextFormField(
+                decoration: const InputDecoration(labelText: 'Sinopsis'),
+                maxLines: 4,
+                onSaved: (value) => _formData['synopsis'] = value,
+                validator: (value) => value!.isEmpty ? 'Requerido' : null,
+              ),
+              const SizedBox(height: 30),
+              ElevatedButton(
+                onPressed: _submit,
+                child: const Text('Guardar Película'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
