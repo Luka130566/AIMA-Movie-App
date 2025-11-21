@@ -1,0 +1,89 @@
+import 'package:flutter/material.dart';
+import '../models/movie.dart';
+import '../services/api_service.dart';
+import 'movie_detail_screen.dart';
+
+class CatalogScreen extends StatefulWidget {
+  const CatalogScreen({super.key});
+
+  @override
+  State<CatalogScreen> createState() => _CatalogScreenState();
+}
+
+class _CatalogScreenState extends State<CatalogScreen> {
+  List<Movie> _movies = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMovies();
+  }
+
+  Future<void> _loadMovies() async {
+    final movies = await ApiService.getMovies();
+    setState(() {
+      _movies = movies;
+      _isLoading = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Catálogo'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () => Navigator.pushNamed(context, '/admin'),
+          ),
+        ],
+      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.7,
+              ),
+              itemCount: _movies.length,
+              itemBuilder: (context, index) {
+                final movie = _movies[index];
+                return Card(
+                  margin: const EdgeInsets.all(8),
+                  child: InkWell(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => MovieDetailScreen(movie: movie),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          child: Image.network(
+                            movie.imageUrl,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => const Icon(Icons.movie),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            movie.title,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+    );
+  }
+}
